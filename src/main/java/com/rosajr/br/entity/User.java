@@ -3,6 +3,7 @@ package com.rosajr.br.entity;
 import lombok.*;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
 @Data
@@ -20,15 +21,15 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotNull
+    @NotBlank
     @Column(name = "USER_NAME")
     private String name;
 
-    @NotNull
+    @NotBlank
     @Column(name = "USER_NICK_NAME")
     private String nickName;
 
-    @NotNull
+    @NotBlank
     @Column(name = "USER_PASSWORD")
     private String password;
 }

@@ -4,19 +4,16 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 
-import javax.validation.constraints.NotNull;
+import javax.validation.constraints.NotBlank;
 
 @AllArgsConstructor
 @Builder
 @Data
 public class UserInputDTO {
-
-    @NotNull
+    @NotBlank
     private String name;
-
-    @NotNull
+    @NotBlank
     private String nickName;
-
-    @NotNull
+    @NotBlank
     private String password;
 }
