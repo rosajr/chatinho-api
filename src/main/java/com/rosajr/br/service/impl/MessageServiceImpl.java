@@ -7,10 +7,11 @@ import com.rosajr.br.exceptions.ObjectNotFoundException;
 import com.rosajr.br.repository.ChatRepository;
 import com.rosajr.br.repository.MessageDataRepository;
 import com.rosajr.br.repository.MessageRepository;
-import com.rosajr.br.repository.UserRepository;
 import com.rosajr.br.service.MessageService;
+import com.rosajr.br.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
@@ -19,22 +20,22 @@ import java.time.ZoneOffset;
 public class MessageServiceImpl implements MessageService {
 
     @Autowired
-    private UserRepository userRepository;
-    @Autowired
     private ChatRepository chatRepository;
     @Autowired
     private MessageRepository messageRepository;
     @Autowired
     private MessageDataRepository messageDataRepository;
+    @Autowired
+    private UserService userService;
 
     @Override
+    @Transactional
     public void create(MessageInputDTO dto) {
 
         var chat = chatRepository.findById(dto.getChatId())
                 .orElseThrow(() -> new ObjectNotFoundException("Chat not found for id: " + dto.getChatId()));
 
-        var sender = userRepository.findById(dto.getSenderId())
-                .orElseThrow(() -> new ObjectNotFoundException("Sender not found for id: " + dto.getSenderId()));
+        var sender = userService.getUserById(dto.getSenderId());
 
         var message = Message.builder()
                 .chat(chat)
@@ -61,4 +62,24 @@ public class MessageServiceImpl implements MessageService {
                 });
 
     }
+
+    @Override
+    @Transactional
+    public void readMessage(Long messageId, Long receiverId) {
+        var messageData = messageDataRepository.findByReceiverIdAndMessageId(receiverId, messageId);
+        messageData.setRead(true);
+    }
+
+    @Override
+    @Transactional
+    public void receiveMessage(Long messageId, Long receiverId) {
+        var messageData = messageDataRepository.findByReceiverIdAndMessageId(receiverId, messageId);
+        messageData.setReceived(true);
+    }
+
+    private Message getMessageById(Long messageId) {
+        return messageRepository.findById(messageId)
+                .orElseThrow(() -> new ObjectNotFoundException("Message not found for id: " + messageId));
+    }
+
 }

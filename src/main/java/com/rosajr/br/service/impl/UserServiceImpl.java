@@ -2,6 +2,7 @@ package com.rosajr.br.service.impl;
 
 import com.rosajr.br.dto.UserInputDTO;
 import com.rosajr.br.entity.User;
+import com.rosajr.br.exceptions.ObjectNotFoundException;
 import com.rosajr.br.repository.UserRepository;
 import com.rosajr.br.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,5 +29,11 @@ public class UserServiceImpl implements UserService {
                 .password(encodedPassword).build();
 
         userRepository.save(user);
+    }
+
+    @Override
+    public User getUserById(Long id) {
+        return userRepository.findById(id)
+                .orElseThrow(() -> new ObjectNotFoundException("User not found for id: " + id));
     }
 }
