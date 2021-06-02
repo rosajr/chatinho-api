@@ -1,8 +1,10 @@
 package com.rosajr.br.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import lombok.*;
 
 import javax.persistence.*;
+import java.util.List;
 
 @Data
 @Builder
@@ -18,5 +20,13 @@ public class Chat {
     @Column(name = "CHAT_ID")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @OneToMany(mappedBy = "chat")
+    @JsonBackReference
+    private List<Message> messages;
+
+    @OneToMany(mappedBy = "chat")
+    @JsonBackReference
+    private List<Participants> participants;
 
 }
